@@ -1,0 +1,147 @@
+
+ArrayList<PVector> ITP = new ArrayList<PVector>();
+ArrayList<ColorDot> colordots;
+
+float radius = 28;
+float a;
+
+boolean mouseflag = false;
+
+
+void setup() {
+    size(350,200,P3D); 
+    colorMode(HSB,100);
+    //filter(BLUR, 0.9);
+    smooth();
+
+    
+    colordots = new ArrayList<ColorDot>();
+    
+} 
+
+void draw() {  
+  
+  background(0);
+  
+  if(ITP.size() < 1 ) {
+    setupITP();
+  }
+  
+  if(frameCount % 6 == 0) {
+    int count = int(random(0,ITP.size()-1));
+    colordots.add(new ColorDot(frameCount, ITP.get(count), random(0,100), radius));
+    ITP.remove(count);
+    
+  }
+  
+  if(mouseX > 20 && mouseX < width-20 && mouseY > 20 && mouseY<height-20) {
+    mouseflag = true;
+    rotateY(map(mouseX,0,width,-PI/7,PI/7));
+    rotateX(map(mouseY,0,height,-PI/7,PI/7));
+    if(frameCount % 30 == 0) {
+      //background(random(0,100),100,100);
+    }
+  } else if(mouseflag) {
+    mouseflag = false;
+  }
+    
+
+      
+  for(int i = colordots.size() -1; i > 0; i--) {
+    ColorDot colordot = colordots.get(i);
+    colordot.update();
+    colordot.display();
+    
+    if(colordot.isDead()){
+      colordots.remove(i);
+    }
+  }    
+}
+
+void setupITP() {
+  //I
+  ITP.add(new PVector(width/11 * 2, height/5 * 1));
+  ITP.add(new PVector(width/11 * 2, height/5 * 2));
+  ITP.add(new PVector(width/11 * 2, height/5 * 3));
+  ITP.add(new PVector(width/11 * 2, height/5 * 4));
+  
+  //T
+  ITP.add(new PVector(width/11 * 4, height/5 * 1));
+  ITP.add(new PVector(width/11 * 5, height/5 * 1));
+  ITP.add(new PVector(width/11 * 6, height/5 * 1));
+  ITP.add(new PVector(width/11 * 5, height/5 * 2));
+  ITP.add(new PVector(width/11 * 5, height/5 * 3));
+  ITP.add(new PVector(width/11 * 5, height/5 * 4));
+  
+  //P
+  ITP.add(new PVector(width/11 * 8, height/5 * 1));
+  ITP.add(new PVector(width/11 * 8, height/5 * 2));
+  ITP.add(new PVector(width/11 * 8, height/5 * 3));
+  ITP.add(new PVector(width/11 * 8, height/5 * 4));
+  ITP.add(new PVector(width/11 * 9, height/5 * 1));
+  ITP.add(new PVector(width/11 * 9, height/5 * 2));
+  ITP.add(new PVector(width/11 * 10-5, height/10 * 3));
+}
+
+class ColorDot {
+ 
+  PGraphics pg;
+  float     framecount;
+  PVector   location;
+  float     col;
+  float     radius;
+  float       lifespan;
+  
+  ColorDot() {
+  }
+  
+  ColorDot(float framecount_, PVector location_, float col_, float radius_) {
+    
+    println("Color Dot Initialization Debugging");
+    
+    framecount = framecount_;
+    
+    location = new PVector(0,0);
+    location.set(location_);
+    
+    col = col_;
+    radius = radius_;
+    pg = createGraphics(int(radius), int(radius));
+    lifespan = 100;
+  }
+  
+  void update() {
+    lifespan -= 0.8;
+  }
+  
+  void display() {
+    
+    println("Color Dot Display Debugging");
+    
+    
+    
+    fill(col,100,100,lifespan/2);
+    stroke(col,100,100,lifespan);
+    
+    noStroke();
+    
+    float i = radius;
+    while(i>0) {
+
+      ellipse(location.x,location.y,i,i);
+      i -= 3;
+    }
+    
+    
+  }
+  
+  boolean isDead() {
+    
+    if (lifespan < 0.0) {
+      return true;
+    } else {
+    return false;
+    }
+  }
+  
+}
