@@ -1,0 +1,144 @@
+MatchColor[] colors = new MatchColor[15];
+MatchColor current = new MatchColor();
+
+float bgH, bgS, bgB;
+float moH, moS, moB;
+float alpha = 100;
+
+float a;
+int Max = 3;
+int index = 0;
+
+float firstpoint=0;
+float secondpoint=0;
+
+float adx;
+float ady;
+
+void setup() {
+  size(600,600);
+  colorMode(HSB, 360,100,100,100);
+  
+  setupColor();
+  bgH = hue(colors[0].bgcol);
+  bgS = saturation(colors[0].bgcol);
+  bgB = brightness(colors[0].bgcol);
+  
+  moH = hue(colors[0].motioncol);
+  moS = saturation(colors[0].motioncol);
+  moB = brightness(colors[0].motioncol);
+  
+}
+void draw() {
+  background(bgH, bgS*adx, bgB*ady,alpha);
+  drawTriangle(firstpoint, true);
+  a = a+0.01;
+  
+  firstpoint = lerp(firstpoint,width,0.005);
+  firstpoint++;
+  
+  if(firstpoint > width/2) {
+    drawTriangle(secondpoint,false);
+    
+    secondpoint = lerp(secondpoint, width/4,0.005);
+    secondpoint++;
+  }
+  
+  if(firstpoint > width){
+    
+    firstpoint = 0;
+    secondpoint = 0;
+    index++;
+    if(index >= 13) {
+      index = 0;
+      }
+      setColor();
+    }
+    
+    adjustColor();
+  
+}
+
+void drawTriangle(float xpoint,boolean first) {
+  pushMatrix();
+  translate(width/2, height/2);
+  fill(moH, moS, moB,alpha);
+  noStroke();
+  rotate(a);
+  for(int i=0; i<Max; i++) {
+    if(first = true) {
+      rotate(2*PI/Max);
+    } else {
+      rotate(2*PI/Max+PI/9);
+    }
+    
+    if(index%3==0){
+      fill(moH, moS, moB,alpha);
+      triangle(0,0,-1*xpoint/tan(PI/3),-1*xpoint,xpoint/tan(PI/3),-1*xpoint);
+      fill(bgH, bgS, bgB,alpha);
+      triangle(0,0,-1*xpoint/tan(PI/3)/2,-1*xpoint/2,xpoint/tan(PI/3)/2,-1*xpoint/2);
+    } else if(index%3==1) {
+      ellipseMode(CORNER);
+      fill(moH, moS, moB,alpha);
+      ellipse(0,0,xpoint,xpoint);
+      fill(bgH, bgS, bgB,alpha);
+      ellipse(0,0,xpoint/2,xpoint/2);
+    } else if(index%3==2) {
+      rectMode(CORNER);
+      fill(moH, moS, moB,alpha);
+      rect(0,0,xpoint,xpoint);
+      fill(bgH, bgS, bgB,alpha);
+      rect(0,0,xpoint/2,xpoint/2);
+    }
+  }
+  popMatrix();
+}
+
+void setColor(){
+  bgH = hue(colors[index].bgcol);
+  bgS = saturation(colors[index].bgcol);
+  bgB = brightness(colors[index].bgcol);
+  
+  moH = hue(colors[index].motioncol);
+  moS = saturation(colors[index].motioncol);
+  moB = brightness(colors[index].motioncol);
+}
+
+void adjustColor() {
+  adx = map(mouseX, 0,width,0,2);
+  ady = map(mouseY,0,height,0,2);
+}
+
+class MatchColor {
+  color bgcol;
+  color motioncol;
+  
+  MatchColor() {
+  }
+  MatchColor(color bgcol_, color motioncol_) {
+    bgcol = bgcol_;
+    motioncol = motioncol_;
+  }
+  void set(MatchColor col) {
+    bgcol = col.bgcol;
+    motioncol = col.motioncol;
+  }
+}
+
+void setupColor() {
+  
+  colors[0] = new MatchColor(color(37,65,93), color(162,67,69));
+  colors[1] = new MatchColor(color(162,67,69), color(58,100,97));
+  colors[2] = new MatchColor(color(18,40,98), color(57,60,98));
+  colors[3] = new MatchColor(color(57,60,98), color(39,52,100));
+  colors[4] = new MatchColor(color(74,83,82), color(31,100,97));
+  colors[5] = new MatchColor(color(31,100,97), color(58,100,97));
+  colors[6] = new MatchColor(color(159,100,59), color(65,100,87));
+  colors[7] = new MatchColor(color(17,93,95), color(47,100,99));
+  colors[8] = new MatchColor(color(218,66,64), color(348,86,95));
+  colors[9] = new MatchColor(color(31,100,97), color(196,90,34));
+  colors[10] = new MatchColor(color(218,66,64), color(348,86,95));
+  colors[11] = new MatchColor(color(139,62,57), color(222,50,51));
+  colors[12] = new MatchColor(color(2,84,72), color(139,63,57));
+  
+}
